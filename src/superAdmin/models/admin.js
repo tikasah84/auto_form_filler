@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
-const Admin = require("../../superAdmin/models/admin");
 const { Schema } = mongoose;
-const userSchema = Schema(
+const adminSchema = Schema(
   {
     email: {
       type: String,
@@ -13,15 +12,10 @@ const userSchema = Schema(
       required: true,
       trim: true,
     },
-    adminId: {
-      type: Schema.Types.ObjectId,
-      ref: Admin,
-      required: true,
-    },
   },
   { timestamps: true }
 );
 
-const User = mongoose.model("user", userSchema);
+const Admin = mongoose.model("admin", adminSchema);
 
-module.exports = User;
+module.exports = Admin;

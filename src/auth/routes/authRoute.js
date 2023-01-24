@@ -10,7 +10,6 @@ const defaultController = require("../controllers/defaultController");
 
 const router = express.Router();
 
-router.get("/", defaultController);
 router.post("/register", userValidation, addUser);
 router.post("/login", login);
 router.get("/profile", auth, profile);

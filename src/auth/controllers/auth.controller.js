@@ -5,6 +5,16 @@ var jwt = require("jsonwebtoken");
 
 const addUser = async (req, res, next) => {
   try {
+    const token = req.headers.authorization.split(" ")[1];
+    var id = "";
+    jwt.verify(token, process.env.SECRET_KEY_ADMIN, (err, decoded) => {
+      if (err) {
+        res.status(403);
+        return res.json(errorFunction(true, err));
+      } else {
+        id = decoded.data.id;
+      }
+    });
     const existingUser = await User.findOne({
       email: req.body.email,
     }).lean(true);
@@ -16,6 +26,7 @@ const addUser = async (req, res, next) => {
       const newUser = await User.create({
         email: req.body.email,
         password: hashedPassword,
+        adminId: id,
       });
       if (newUser) {
         const userData = {
@@ -125,4 +136,20 @@ const auth = async (req, res, next) => {
   }
 };
 
-module.exports = { addUser, login, profile, auth };
+const getUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({}).exec();
+    if (users) {
+      res.status(201);
+      return res.json(errorFunction(false, "Users", users));
+    } else {
+      res.status(403);
+      return res.json(errorFunction(true, "Error Getting Users"));
+    }
+  } catch (error) {
+    res.status(400);
+    return res.json(errorFunction(true, "Error Getting Users"));
+  }
+};
+
+module.exports = { addUser, login, profile, auth, getUsers };
